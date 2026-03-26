@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Brachistochrone Curve Virtual Lab — Interactive Physics Simulation" />
+  <title>Brachistochrone Curve — Virtual Lab</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<!-- ================================================================
+     HEADER
+================================================================ -->
+<header class="site-header">
+  <div class="header-left">
+    <span class="header-title">Brachistochrone Curve</span>
+    <span class="header-subtitle">Interactive Physics Simulation</span>
+  </div>
+  <span class="header-badge">Virtual Lab</span>
+</header>
+
+<!-- ================================================================
+     MAIN CONTENT
+================================================================ -->
+<main class="container">
+
+  <!-- ── SIMULATION CANVAS ── -->
+  <section class="canvas-card">
+    <h2 class="section-title">Simulation</h2>
+
+    <div class="canvas-wrapper">
+      <canvas id="simCanvas"></canvas>
+    </div>
+
+    <div class="canvas-legend">
+      <div class="legend-item">
+        <span class="legend-dot cycloid"></span>
+        <span>Cycloid (Brachistochrone) — Ball C</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-dot straight"></span>
+        <span>Straight Line — Ball S</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-dot arc"></span>
+        <span>Circular Arc — Ball A</span>
+      </div>
+    </div>
+
+    <div class="status-bar">
+      <span class="status-dot" id="statusDot"></span>
+      <span id="statusText">Ready — press Run to start simulation</span>
+    </div>
+  </section>
+
+  <!-- ── CONTROLS + RESULTS ── -->
+  <div class="controls-results-row">
+
+    <!-- Controls Panel -->
+    <div class="panel">
+      <h2 class="section-title">Parameters</h2>
+
+      <div class="control-group">
+        <div class="control-label">
+          <span>Vertical Drop (H)</span>
+          <span class="control-value" id="heightVal">2.0 m</span>
+        </div>
+        <input type="range" id="heightSlider" min="0.5" max="5.0" step="0.1" value="2.0" />
+      </div>
+
+      <div class="control-group">
+        <div class="control-label">
+          <span>Gravitational Acceleration (g)</span>
+          <span class="control-value" id="gravVal"></span>
+        </div>
+        <select class="select-field" id="gravitySelect">
+          <option value="9.81" selected>Earth — 9.81 m/s²</option>
+          <option value="1.62">Moon — 1.62 m/s²</option>
+          <option value="3.72">Mars — 3.72 m/s²</option>
+          <option value="24.79">Jupiter — 24.79 m/s²</option>
+          <option value="5.0">Custom — 5.00 m/s²</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <div class="control-label">
+          <span>Active Paths</span>
+        </div>
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.5rem;">
+          <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+            <input type="checkbox" id="checkCycloid" checked style="accent-color: var(--cycloid-color);" />
+            <span style="font-size: 0.85rem; color: var(--text-color);">Cycloid</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+            <input type="checkbox" id="checkStraight" checked style="accent-color: var(--straight-color);" />
+            <span style="font-size: 0.85rem; color: var(--text-color);">Straight Line</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+            <input type="checkbox" id="checkArc" checked style="accent-color: var(--arc-color);" />
+            <span style="font-size: 0.85rem; color: var(--text-color);">Circular Arc</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" id="runBtn">▶ Run</button>
+        <button class="btn btn-secondary" id="resetBtn">↺ Reset</button>
+      </div>
+    </div>
+
+    <!-- Results Panel -->
+    <div class="panel">
+      <h2 class="section-title">Transit Times</h2>
+
+      <div class="results-grid">
+
+        <div class="result-card cycloid" id="cardCycloid">
+          <div>
+            <div class="result-path-name cycloid">Cycloid</div>
+            <div style="font-size:0.72rem; color:var(--text-muted); margin-top:2px;">Brachistochrone</div>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
+            <div class="result-time pending" id="timeCycloid">—</div>
+            <span class="winner-badge" id="badgeCycloid">🏆 FASTEST</span>
+          </div>
+        </div>
+
+        <div class="result-card straight" id="cardStraight">
+          <div>
+            <div class="result-path-name straight">Straight Line</div>
+            <div style="font-size:0.72rem; color:var(--text-muted); margin-top:2px;">Direct path</div>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
+            <div class="result-time pending" id="timeStraight">—</div>
+            <span class="winner-badge" id="badgeStraight">🏆 FASTEST</span>
+          </div>
+        </div>
+
+        <div class="result-card arc" id="cardArc">
+          <div>
+            <div class="result-path-name arc">Circular Arc</div>
+            <div style="font-size:0.72rem; color:var(--text-muted); margin-top:2px;">Curved path</div>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
+            <div class="result-time pending" id="timeArc">—</div>
+            <span class="winner-badge" id="badgeArc">🏆 FASTEST</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="conclusion-box" id="conclusionBox"></div>
+    </div>
+
+  </div><!-- /controls-results-row -->
+
+  <!-- ── OBSERVATION TABLE ── -->
+  <section class="table-card">
+    <h2 class="section-title">Observation Table</h2>
+
+    <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:1rem;">
+      Run the simulation with different parameters and click <strong style="color:var(--text-secondary)">Add to Table</strong> after each run to build your lab record.
+    </p>
+
+    <div style="overflow-x:auto;">
+      <table class="obs-table">
+        <thead>
+          <tr>
+            <th>No.</th>
+            <th>H (m)</th>
+            <th>g (m/s²)</th>
+            <th style="color:var(--cycloid-color);">T<sub>cycloid</sub> (s)</th>
+            <th style="color:var(--straight-color);">T<sub>straight</sub> (s)</th>
+            <th style="color:var(--arc-color);">T<sub>arc</sub> (s)</th>
+            <th>Fastest Path</th>
+          </tr>
+        </thead>
+        <tbody id="obsTableBody">
+          <tr class="empty-row">
+            <td colspan="8">No observations yet — run the simulation and click "Add to Table"</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-actions">
+      <button class="btn btn-primary" id="addRowBtn">+ Add to Table</button>
+      <button class="btn btn-secondary" id="clearTableBtn">Clear Table</button>
+      <button class="btn btn-secondary" onclick="window.print()">🖨 Print</button>
+    </div>
+  </section>
+
+  <!-- ── THEORY SECTION ── -->
+  <section class="theory-card">
+    <h2 class="section-title">Theory &amp; Derivation</h2>
+
+    <!-- 1. What is the Brachistochrone? -->
+    <div class="accordion-item">
+      <button class="accordion-header active">
+        1. The Brachistochrone Problem
+        <span class="accordion-arrow">▼</span>
+      </button>
+      <div class="accordion-body open">
+        <p class="theory-text">
+          The word <strong>Brachistochrone</strong> comes from the Greek: <em>brachistos</em> (shortest) + <em>chronos</em> (time).
+          The problem, posed by Johann Bernoulli in 1696, asks: <em>"What is the curve of fastest descent between two points under constant gravity?"</em>
+        </p>
+        <p class="theory-text">
+          Intuitively, one might guess the answer is a straight line (shortest distance) or a steep arc that picks up speed quickly. Surprisingly, the answer is a <strong>cycloid</strong> — the curve traced by a point on the rim of a rolling circle.
+        </p>
+        <p class="theory-text">
+          The problem was solved in 1696 by Johann Bernoulli, Jacob Bernoulli, Newton, Leibniz, and de l'Hôpital — five correct solutions in one year — and became the founding problem of the <strong>Calculus of Variations</strong>.
+        </p>
+      </div>
+    </div>
+
+    <!-- 2. Cycloid Parametric Equations -->
+    <div class="accordion-item">
+      <button class="accordion-header">
+        2. Cycloid — Parametric Equations
+        <span class="accordion-arrow">▼</span>
+      </button>
+      <div class="accordion-body">
+        <p class="theory-text">
+          The Brachistochrone is a <strong>cycloid</strong>, defined parametrically by:
+        </p>
+        <div class="formula-block">  x(θ) = R (θ − sin θ)
+  y(θ) = R (1 − cos θ)
+
+  where  R = H / 2   (for a half-cycloid,  θ ∈ [0, π])
+         H = vertical drop from start to end</div>
+        <p class="theory-text">
+          The parameter <span class="formula-inline">θ</span> is the rolling angle of the generating circle of radius <span class="formula-inline">R</span>.
+          At <span class="formula-inline">θ = 0</span>, the ball is at the start <span class="formula-inline">(0, 0)</span>.
+          At <span class="formula-inline">θ = π</span>, it reaches the lowest point of the arc at <span class="formula-inline">(πR, 2R)</span>, which is our endpoint where <span class="formula-inline">y = H</span>.
+        </p>
+      </div>
+    </div>
+
+    <!-- 3. Transit Time Formulae -->
+    <div class="accordion-item">
+      <button class="accordion-header">
+        3. Analytical Transit Times
+        <span class="accordion-arrow">▼</span>
+      </button>
+      <div class="accordion-body">
+        <p class="theory-text"><strong>Cycloid (Brachistochrone):</strong></p>
+        <p class="theory-text">
+          Using energy conservation <span class="formula-inline">v = √(2gy)</span> and the arc-length element of a cycloid, the transit time integrates exactly to:
+        </p>
+        <div class="formula-block">  T_cycloid  =  π √(R / g)
+
+  where  R = H/2,  g = gravitational acceleration</div>
+
+        <p class="theory-text" style="margin-top:1rem;"><strong>Straight Line:</strong></p>
+        <p class="theory-text">
+          Along a straight incline of length <span class="formula-inline">L = √(X² + H²)</span> at angle <span class="formula-inline">α = arctan(H/X)</span>:
+        </p>
+        <div class="formula-block">  T_straight = √( 2L² / (g·H) )
+             = √( 2(X² + H²) / (g·H) )
+
+  where  X = π·H/2  (horizontal reach of the cycloid endpoint)</div>
+
+        <p class="theory-text" style="margin-top:1rem;"><strong>Circular Arc:</strong></p>
+        <p class="theory-text">
+          For the circular arc of radius <span class="formula-inline">Rc = (X² + H²) / (2H)</span> with vertical tangent at start, no closed form exists, so we use <strong>numerical integration</strong>:
+        </p>
+        <div class="formula-block">  T_arc  =  ∫ ds / v(s)  =  ∫ ds / √(2g·y(s))
+
+  Evaluated by Riemann sum over N = 600 arc segments.</div>
+      </div>
+    </div>
+
+    <!-- 4. Calculus of Variations Derivation -->
+    <div class="accordion-item">
+      <button class="accordion-header">
+        4. Derivation via Calculus of Variations (Euler-Lagrange)
+        <span class="accordion-arrow">▼</span>
+      </button>
+      <div class="accordion-body">
+        <p class="theory-text">
+          We want to minimize the time functional. Using energy conservation, the speed at depth <span class="formula-inline">y</span> is <span class="formula-inline">v = √(2gy)</span>. The time along a curve <span class="formula-inline">y(x)</span> is:
+        </p>
+        <div class="formula-block">  T = ∫ ds/v = ∫ √(1 + y'²) / √(2gy)  dx</div>
+        <p class="theory-text">
+          This is a functional of the form <span class="formula-inline">T = ∫ F(y, y') dx</span> where <span class="formula-inline">F</span> does not depend explicitly on <span class="formula-inline">x</span>. The Euler-Lagrange equation then reduces to the Beltrami identity:
+        </p>
+        <div class="formula-block">  F  −  y' · (∂F/∂y')  =  C  (constant)
+
+  Substituting F = √(1 + y'²) / √(2gy) and simplifying:
+
+  y (1 + y'²)  =  1/(2gC²)  =  k  (constant)</div>
+        <p class="theory-text">
+          This is the differential equation of a <strong>cycloid</strong>, confirming that the brachistochrone is indeed a cycloid.
+        </p>
+      </div>
+    </div>
+
+    <!-- 5. Tautochrone Property -->
+    <div class="accordion-item">
+      <button class="accordion-header">
+        5. Bonus: Tautochrone Property of the Cycloid
+        <span class="accordion-arrow">▼</span>
+      </button>
+      <div class="accordion-body">
+        <p class="theory-text">
+          The cycloid possesses a remarkable second property, discovered by Huygens (1659): it is also a <strong>tautochrone</strong> (Greek: tauto = same, chronos = time).
+        </p>
+        <p class="theory-text">
+          This means: a ball released from <em>any</em> point on a cycloid bowl reaches the lowest point in exactly the <em>same time</em>, regardless of its starting position. This time is:
+        </p>
+        <div class="formula-block">  T_tautochrone  =  π √(R / g)
+
+  (Identical to the brachistochrone transit time!)</div>
+        <p class="theory-text">
+          Huygens used this property to design the first <strong>isochronous pendulum clock</strong> — a pendulum constrained by cycloidal cheeks to swing in a cycloidal arc, ensuring a constant period regardless of amplitude.
+        </p>
+      </div>
+    </div>
+
+    <!-- 6. Result Summary -->
+    <div class="accordion-item">
+      <button class="accordion-header">
+        6. Expected Experimental Result
+        <span class="accordion-arrow">▼</span>
+      </button>
+      <div class="accordion-body">
+        <p class="theory-text">
+          For a standard drop of <strong>H = 2.0 m</strong> on Earth (<strong>g = 9.81 m/s²</strong>):
+        </p>
+        <div class="formula-block">  R           =  H/2       =  1.000 m
+  T_cycloid   =  π√(R/g)   =  π × √(1.000/9.81)  ≈  1.0028 s
+  X_end       =  πR        =  3.1416 m
+  L           =  √(X²+H²) =  √(9.870+4.000)      =  3.723 m
+  T_straight  =  √(2L²/gH) = √(27.721/19.62)     ≈  1.1888 s
+  T_arc       =  (numerical)                       ≈  1.0782 s
+
+  Ranking:  T_cycloid < T_arc < T_straight
+            1.0028 s  < 1.078 s < 1.189 s</div>
+        <p class="theory-text">
+          The cycloid is approximately <strong>18.6% faster</strong> than the straight line and <strong>7.5% faster</strong> than the circular arc for these parameters.
+          These ratios change with H and g but the ranking <em>always</em> holds: <strong>Cycloid &lt; Arc &lt; Straight</strong>.
+        </p>
+      </div>
+    </div>
+
+  </section>
+
+</main>
+
+<!-- ================================================================
+     FOOTER
+================================================================ -->
+<footer class="site-footer">
+  Brachistochrone Curve Virtual Lab &nbsp;|&nbsp; B.Sc. Physics (Hons.) Semester VI &nbsp;|&nbsp;
+  Experiment No. 8 &nbsp;|&nbsp; <a href="https://www.srisriuniversity.edu.in" target="_blank" style="color:var(--text-muted);">www.srisriuniversity.edu.in</a>
+</footer>
+
+<script src="js/simulation.js"></script>
+</body>
+</html>
