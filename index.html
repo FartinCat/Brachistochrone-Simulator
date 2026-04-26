@@ -161,6 +161,7 @@
 
     <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:1rem;">
       Run the simulation with different parameters and click <strong style="color:var(--text-secondary)">Add to Table</strong> after each run to build your lab record.
+      The experiment report below will auto-populate once you have recorded <strong style="color:var(--cycloid-color)">5 observations</strong>.
     </p>
 
     <div style="overflow-x:auto;">
@@ -191,161 +192,320 @@
     </div>
   </section>
 
-  <!-- ── THEORY SECTION ── -->
-  <section class="theory-card">
-    <h2 class="section-title">Theory &amp; Derivation</h2>
+  <!-- ── LAB REPORT SECTION ── -->
+  <section class="lab-report-card" id="labReportSection">
+    <h2 class="section-title">Experiment Report</h2>
 
-    <!-- 1. What is the Brachistochrone? -->
-    <div class="accordion-item">
-      <button class="accordion-header active">
-        1. The Brachistochrone Problem
-        <span class="accordion-arrow">▼</span>
+    <div class="lab-report-progress" id="labReportProgress">
+      <div class="progress-fill" id="labProgressFill"></div>
+      <span class="progress-label" id="labProgressLabel">0 / 5 observations recorded</span>
+    </div>
+
+    <!-- ── 1. AIM ── -->
+    <div class="lab-section">
+      <button class="lab-section-header active" data-target="aimBody">
+        <span class="lab-section-num">1</span>
+        <span class="lab-section-title-text">Aim</span>
+        <span class="lab-arrow">▼</span>
       </button>
-      <div class="accordion-body open">
-        <p class="theory-text">
-          The word <strong>Brachistochrone</strong> comes from the Greek: <em>brachistos</em> (shortest) + <em>chronos</em> (time).
-          The problem, posed by Johann Bernoulli in 1696, asks: <em>"What is the curve of fastest descent between two points under constant gravity?"</em>
-        </p>
-        <p class="theory-text">
-          Intuitively, one might guess the answer is a straight line (shortest distance) or a steep arc that picks up speed quickly. Surprisingly, the answer is a <strong>cycloid</strong> — the curve traced by a point on the rim of a rolling circle.
-        </p>
-        <p class="theory-text">
-          The problem was solved in 1696 by Johann Bernoulli, Jacob Bernoulli, Newton, Leibniz, and de l'Hôpital — five correct solutions in one year — and became the founding problem of the <strong>Calculus of Variations</strong>.
+      <div class="lab-section-body open" id="aimBody">
+        <p class="lab-text">
+          To verify experimentally that among three paths — a <strong>Cycloid (Brachistochrone)</strong>, a
+          <strong>Straight Line</strong>, and a <strong>Circular Arc</strong> — connecting two fixed points under
+          uniform gravitational acceleration, the cycloid is the curve of fastest descent (minimum transit time),
+          and to measure and compare the transit times of a ball sliding frictionlessly along each of these paths
+          for varying values of vertical drop <em>H</em> and gravitational acceleration <em>g</em>.
         </p>
       </div>
     </div>
 
-    <!-- 2. Cycloid Parametric Equations -->
-    <div class="accordion-item">
-      <button class="accordion-header">
-        2. Cycloid — Parametric Equations
-        <span class="accordion-arrow">▼</span>
+    <!-- ── 2. APPARATUS REQUIRED ── -->
+    <div class="lab-section">
+      <button class="lab-section-header" data-target="apparatusBody">
+        <span class="lab-section-num">2</span>
+        <span class="lab-section-title-text">Apparatus Required</span>
+        <span class="lab-arrow">▼</span>
       </button>
-      <div class="accordion-body">
-        <p class="theory-text">
-          The Brachistochrone is a <strong>cycloid</strong>, defined parametrically by:
+      <div class="lab-section-body" id="apparatusBody">
+        <ul class="lab-apparatus-list">
+          <li>
+            <span class="apparatus-icon">🖥️</span>
+            <div>
+              <strong>Brachistochrone Virtual Simulation Platform</strong>
+              <div class="apparatus-desc">Web-based physics engine with real-time canvas rendering and energy-conservation integration</div>
+            </div>
+          </li>
+          <li>
+            <span class="apparatus-icon">📐</span>
+            <div>
+              <strong>Parametric Path Generator</strong>
+              <div class="apparatus-desc">Generates 600 discrete points per path: Cycloid (θ ∈ [0, π]), Straight Line, and Circular Arc</div>
+            </div>
+          </li>
+          <li>
+            <span class="apparatus-icon">⚙️</span>
+            <div>
+              <strong>Physics Engine</strong>
+              <div class="apparatus-desc">Analytical transit-time computation using energy conservation (v = √2gy); arc-time normalized to closed-form results</div>
+            </div>
+          </li>
+          <li>
+            <span class="apparatus-icon">🎚️</span>
+            <div>
+              <strong>Parameter Controls</strong>
+              <div class="apparatus-desc">Vertical drop H: 0.5 m – 5.0 m (step 0.1 m); Gravity g: Earth (9.81), Moon (1.62), Mars (3.72), Jupiter (24.79), Custom (5.00) m/s²</div>
+            </div>
+          </li>
+          <li>
+            <span class="apparatus-icon">⏱️</span>
+            <div>
+              <strong>Precision Timer</strong>
+              <div class="apparatus-desc">High-resolution <code>performance.now()</code> clock; transit times reported to 4 decimal places</div>
+            </div>
+          </li>
+          <li>
+            <span class="apparatus-icon">📊</span>
+            <div>
+              <strong>Observation Table &amp; Report Generator</strong>
+              <div class="apparatus-desc">Auto-populates experiment report upon recording 5 or more observations</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ── 3. THEORY ── -->
+    <div class="lab-section">
+      <button class="lab-section-header" data-target="theoryBody">
+        <span class="lab-section-num">3</span>
+        <span class="lab-section-title-text">Theory</span>
+        <span class="lab-arrow">▼</span>
+      </button>
+      <div class="lab-section-body" id="theoryBody">
+
+        <p class="lab-text">
+          The <strong>Brachistochrone Problem</strong> (Greek: <em>brachistos</em> = shortest, <em>chronos</em> = time),
+          first posed by Johann Bernoulli in 1696, asks: <em>"Given two points A and B in a vertical plane, what is the
+          curve of fastest descent for a frictionless particle sliding under gravity alone?"</em>
+        </p>
+
+        <h4 class="theory-subheading">The Cycloid — Brachistochrone Solution</h4>
+        <p class="lab-text">
+          The answer is the <strong>cycloid</strong> — the curve traced by a point on the rim of a circle of radius
+          R rolling along a horizontal line. It is defined parametrically by:
         </p>
         <div class="formula-block">  x(θ) = R (θ − sin θ)
-  y(θ) = R (1 − cos θ)
+  y(θ) = R (1 − cos θ)        θ ∈ [0, π]
 
-  where  R = H / 2   (for a half-cycloid,  θ ∈ [0, π])
-         H = vertical drop from start to end</div>
-        <p class="theory-text">
-          The parameter <span class="formula-inline">θ</span> is the rolling angle of the generating circle of radius <span class="formula-inline">R</span>.
-          At <span class="formula-inline">θ = 0</span>, the ball is at the start <span class="formula-inline">(0, 0)</span>.
-          At <span class="formula-inline">θ = π</span>, it reaches the lowest point of the arc at <span class="formula-inline">(πR, 2R)</span>, which is our endpoint where <span class="formula-inline">y = H</span>.
+  where  R = H/2,  H = vertical drop</div>
+
+        <h4 class="theory-subheading">Transit Time Formulae</h4>
+        <p class="lab-text"><strong>Cycloid (analytical closed form):</strong></p>
+        <div class="formula-block">  T_cycloid = π √(R/g)    where R = H/2</div>
+
+        <p class="lab-text"><strong>Straight Line (analytical):</strong></p>
+        <div class="formula-block">  L = √(X² + H²),   X = πH/2   (cycloid horizontal reach)
+  T_straight = √( 2L² / (g·H) )</div>
+
+        <p class="lab-text"><strong>Circular Arc (numerical integration):</strong></p>
+        <div class="formula-block">  Radius Rc = (X² + H²) / (2H)
+  T_arc = ∫ ds / √(2g·y(s))   — evaluated over 600 arc segments</div>
+
+        <h4 class="theory-subheading">Derivation via Calculus of Variations</h4>
+        <p class="lab-text">
+          Using energy conservation, speed at depth y is v = √(2gy). The transit time functional is:
         </p>
+        <div class="formula-block">  T = ∫ √(1 + y'²) / √(2gy)  dx</div>
+        <p class="lab-text">
+          Since the integrand F(y, y') is independent of x, the Euler-Lagrange equation reduces
+          to the Beltrami identity: F − y'(∂F/∂y') = C, which yields:
+        </p>
+        <div class="formula-block">  y(1 + y'²) = k  (constant) — the differential equation of the cycloid.</div>
+
+        <h4 class="theory-subheading">Tautochrone Property</h4>
+        <p class="lab-text">
+          The cycloid is also a <strong>tautochrone</strong> (Huygens, 1659): a ball released from
+          <em>any</em> point on a cycloidal bowl reaches the bottom in the same time T = π√(R/g),
+          independent of the release position. This led Huygens to design the first isochronous pendulum clock.
+        </p>
+
+        <h4 class="theory-subheading">Expected Ranking</h4>
+        <div class="formula-block">  T_cycloid  &lt;  T_arc  &lt;  T_straight   (always, for any H and g)</div>
       </div>
     </div>
 
-    <!-- 3. Transit Time Formulae -->
-    <div class="accordion-item">
-      <button class="accordion-header">
-        3. Analytical Transit Times
-        <span class="accordion-arrow">▼</span>
+    <!-- ── 4. PROCEDURE ── -->
+    <div class="lab-section">
+      <button class="lab-section-header" data-target="procedureBody">
+        <span class="lab-section-num">4</span>
+        <span class="lab-section-title-text">Procedure</span>
+        <span class="lab-arrow">▼</span>
       </button>
-      <div class="accordion-body">
-        <p class="theory-text"><strong>Cycloid (Brachistochrone):</strong></p>
-        <p class="theory-text">
-          Using energy conservation <span class="formula-inline">v = √(2gy)</span> and the arc-length element of a cycloid, the transit time integrates exactly to:
-        </p>
-        <div class="formula-block">  T_cycloid  =  π √(R / g)
-
-  where  R = H/2,  g = gravitational acceleration</div>
-
-        <p class="theory-text" style="margin-top:1rem;"><strong>Straight Line:</strong></p>
-        <p class="theory-text">
-          Along a straight incline of length <span class="formula-inline">L = √(X² + H²)</span> at angle <span class="formula-inline">α = arctan(H/X)</span>:
-        </p>
-        <div class="formula-block">  T_straight = √( 2L² / (g·H) )
-             = √( 2(X² + H²) / (g·H) )
-
-  where  X = π·H/2  (horizontal reach of the cycloid endpoint)</div>
-
-        <p class="theory-text" style="margin-top:1rem;"><strong>Circular Arc:</strong></p>
-        <p class="theory-text">
-          For the circular arc of radius <span class="formula-inline">Rc = (X² + H²) / (2H)</span> with vertical tangent at start, no closed form exists, so we use <strong>numerical integration</strong>:
-        </p>
-        <div class="formula-block">  T_arc  =  ∫ ds / v(s)  =  ∫ ds / √(2g·y(s))
-
-  Evaluated by Riemann sum over N = 600 arc segments.</div>
+      <div class="lab-section-body" id="procedureBody">
+        <ol class="lab-procedure-list">
+          <li>
+            <span class="proc-step">Step 1</span>
+            Open the Brachistochrone Virtual Lab. Ensure the simulation canvas is visible and all three path options
+            (Cycloid, Straight Line, Circular Arc) are enabled via the checkboxes.
+          </li>
+          <li>
+            <span class="proc-step">Step 2</span>
+            Set the <strong>Vertical Drop (H)</strong> to the desired value using the slider
+            (range: 0.5 m to 5.0 m). Note the value displayed.
+          </li>
+          <li>
+            <span class="proc-step">Step 3</span>
+            Select the <strong>Gravitational Acceleration (g)</strong> from the dropdown menu
+            corresponding to the planetary body (e.g., Earth = 9.81 m/s²).
+          </li>
+          <li>
+            <span class="proc-step">Step 4</span>
+            Click <strong>▶ Run</strong>. Observe all three balls slide simultaneously along their
+            respective paths. Note which ball reaches the endpoint first.
+          </li>
+          <li>
+            <span class="proc-step">Step 5</span>
+            When the simulation ends, record the transit times T<sub>cycloid</sub>, T<sub>straight</sub>,
+            and T<sub>arc</sub> shown in the Transit Times panel.
+          </li>
+          <li>
+            <span class="proc-step">Step 6</span>
+            Click <strong>+ Add to Table</strong> to save the current observation to the Observation Table.
+          </li>
+          <li>
+            <span class="proc-step">Step 7</span>
+            Click <strong>↺ Reset</strong>, change the value of H or g, and repeat Steps 4–6 until
+            at least <strong>5 observations</strong> have been recorded.
+          </li>
+          <li>
+            <span class="proc-step">Step 8</span>
+            After 5 observations, the Observation Summary, Calculation, Result, and Conclusion sections
+            below will automatically populate with your experimental data.
+          </li>
+          <li>
+            <span class="proc-step">Step 9</span>
+            Analyse the populated Calculation section to verify the theoretical formulae against
+            your experimental values. Use the Print button to generate a lab record if needed.
+          </li>
+        </ol>
       </div>
     </div>
 
-    <!-- 4. Calculus of Variations Derivation -->
-    <div class="accordion-item">
-      <button class="accordion-header">
-        4. Derivation via Calculus of Variations (Euler-Lagrange)
-        <span class="accordion-arrow">▼</span>
+    <!-- ── 5. OBSERVATION (auto-updates) ── -->
+    <div class="lab-section">
+      <button class="lab-section-header" data-target="obsBody">
+        <span class="lab-section-num">5</span>
+        <span class="lab-section-title-text">Observation</span>
+        <span class="lab-arrow">▼</span>
+        <span class="auto-badge" id="obsBadge">Awaiting data…</span>
       </button>
-      <div class="accordion-body">
-        <p class="theory-text">
-          We want to minimize the time functional. Using energy conservation, the speed at depth <span class="formula-inline">y</span> is <span class="formula-inline">v = √(2gy)</span>. The time along a curve <span class="formula-inline">y(x)</span> is:
-        </p>
-        <div class="formula-block">  T = ∫ ds/v = ∫ √(1 + y'²) / √(2gy)  dx</div>
-        <p class="theory-text">
-          This is a functional of the form <span class="formula-inline">T = ∫ F(y, y') dx</span> where <span class="formula-inline">F</span> does not depend explicitly on <span class="formula-inline">x</span>. The Euler-Lagrange equation then reduces to the Beltrami identity:
-        </p>
-        <div class="formula-block">  F  −  y' · (∂F/∂y')  =  C  (constant)
-
-  Substituting F = √(1 + y'²) / √(2gy) and simplifying:
-
-  y (1 + y'²)  =  1/(2gC²)  =  k  (constant)</div>
-        <p class="theory-text">
-          This is the differential equation of a <strong>cycloid</strong>, confirming that the brachistochrone is indeed a cycloid.
-        </p>
+      <div class="lab-section-body" id="obsBody">
+        <div id="obsPlaceholder" class="pending-placeholder">
+          <div class="pending-icon">📋</div>
+          <p>This section will auto-populate once you record <strong>5 observations</strong> in the table above.</p>
+          <div class="pending-progress">
+            <span id="obsCount">0</span> / 5 observations recorded
+          </div>
+        </div>
+        <div id="obsContent" style="display:none;">
+          <p class="lab-text">The following observations were recorded by running the simulation with different values of H and g and noting the transit times of the three balls along their respective paths.</p>
+          <div style="overflow-x:auto; margin-top:1rem;">
+            <table class="obs-table report-table" id="reportObsTable">
+              <thead>
+                <tr>
+                  <th>No.</th>
+                  <th>H (m)</th>
+                  <th>g (m/s²)</th>
+                  <th style="color:var(--cycloid-color);">T<sub>cyc</sub> (s)</th>
+                  <th style="color:var(--straight-color);">T<sub>str</sub> (s)</th>
+                  <th style="color:var(--arc-color);">T<sub>arc</sub> (s)</th>
+                  <th>Fastest</th>
+                </tr>
+              </thead>
+              <tbody id="reportObsBody"></tbody>
+            </table>
+          </div>
+          <p class="lab-text" style="margin-top:1rem;" id="obsSummaryText"></p>
+        </div>
       </div>
     </div>
 
-    <!-- 5. Tautochrone Property -->
-    <div class="accordion-item">
-      <button class="accordion-header">
-        5. Bonus: Tautochrone Property of the Cycloid
-        <span class="accordion-arrow">▼</span>
+    <!-- ── 6. CALCULATION ── -->
+    <div class="lab-section">
+      <button class="lab-section-header" data-target="calcBody">
+        <span class="lab-section-num">6</span>
+        <span class="lab-section-title-text">Calculation</span>
+        <span class="lab-arrow">▼</span>
+        <span class="auto-badge" id="calcBadge">Awaiting data…</span>
       </button>
-      <div class="accordion-body">
-        <p class="theory-text">
-          The cycloid possesses a remarkable second property, discovered by Huygens (1659): it is also a <strong>tautochrone</strong> (Greek: tauto = same, chronos = time).
-        </p>
-        <p class="theory-text">
-          This means: a ball released from <em>any</em> point on a cycloid bowl reaches the lowest point in exactly the <em>same time</em>, regardless of its starting position. This time is:
-        </p>
-        <div class="formula-block">  T_tautochrone  =  π √(R / g)
+      <div class="lab-section-body" id="calcBody">
+        <div id="calcPlaceholder" class="pending-placeholder">
+          <div class="pending-icon">🧮</div>
+          <p>Sample calculations will appear here after <strong>5 observations</strong> are recorded.</p>
+          <div class="pending-progress">
+            <span id="calcCount">0</span> / 5 observations recorded
+          </div>
+        </div>
+        <div id="calcContent" style="display:none;">
+          <p class="lab-text">
+            Sample calculation shown for <strong>Observation No. 1</strong>. The analytical formulae are applied
+            below to verify the transit times recorded in the observation table.
+          </p>
+          <div id="calcDetails"></div>
 
-  (Identical to the brachistochrone transit time!)</div>
-        <p class="theory-text">
-          Huygens used this property to design the first <strong>isochronous pendulum clock</strong> — a pendulum constrained by cycloidal cheeks to swing in a cycloidal arc, ensuring a constant period regardless of amplitude.
-        </p>
+          <h4 class="theory-subheading" style="margin-top:1.4rem;">Speed Advantage of Cycloid</h4>
+          <p class="lab-text">The percentage by which the cycloid is faster than each alternative path is calculated as:</p>
+          <div class="formula-block" id="calcAdvantage">—</div>
+        </div>
       </div>
     </div>
 
-    <!-- 6. Result Summary -->
-    <div class="accordion-item">
-      <button class="accordion-header">
-        6. Expected Experimental Result
-        <span class="accordion-arrow">▼</span>
+    <!-- ── 7. RESULT ── -->
+    <div class="lab-section">
+      <button class="lab-section-header" data-target="resultBody">
+        <span class="lab-section-num">7</span>
+        <span class="lab-section-title-text">Result</span>
+        <span class="lab-arrow">▼</span>
+        <span class="auto-badge" id="resultBadge">Awaiting data…</span>
       </button>
-      <div class="accordion-body">
-        <p class="theory-text">
-          For a standard drop of <strong>H = 2.0 m</strong> on Earth (<strong>g = 9.81 m/s²</strong>):
-        </p>
-        <div class="formula-block">  R           =  H/2       =  1.000 m
-  T_cycloid   =  π√(R/g)   =  π × √(1.000/9.81)  ≈  1.0028 s
-  X_end       =  πR        =  3.1416 m
-  L           =  √(X²+H²) =  √(9.870+4.000)      =  3.723 m
-  T_straight  =  √(2L²/gH) = √(27.721/19.62)     ≈  1.1888 s
-  T_arc       =  (numerical)                       ≈  1.0782 s
-
-  Ranking:  T_cycloid < T_arc < T_straight
-            1.0028 s  < 1.078 s < 1.189 s</div>
-        <p class="theory-text">
-          The cycloid is approximately <strong>18.6% faster</strong> than the straight line and <strong>7.5% faster</strong> than the circular arc for these parameters.
-          These ratios change with H and g but the ranking <em>always</em> holds: <strong>Cycloid &lt; Arc &lt; Straight</strong>.
-        </p>
+      <div class="lab-section-body" id="resultBody">
+        <div id="resultPlaceholder" class="pending-placeholder">
+          <div class="pending-icon">📈</div>
+          <p>Results will be generated automatically after <strong>5 observations</strong> are recorded.</p>
+          <div class="pending-progress">
+            <span id="resultCount">0</span> / 5 observations recorded
+          </div>
+        </div>
+        <div id="resultContent" style="display:none;">
+          <div id="resultTable"></div>
+          <div id="resultSummary" style="margin-top:1rem;"></div>
+        </div>
       </div>
     </div>
 
-  </section>
+    <!-- ── 8. CONCLUSION ── -->
+    <div class="lab-section">
+      <button class="lab-section-header" data-target="conclusionBody">
+        <span class="lab-section-num">8</span>
+        <span class="lab-section-title-text">Conclusion</span>
+        <span class="lab-arrow">▼</span>
+        <span class="auto-badge" id="conclusionBadge">Awaiting data…</span>
+      </button>
+      <div class="lab-section-body" id="conclusionBody">
+        <div id="conclusionPlaceholder" class="pending-placeholder">
+          <div class="pending-icon">✅</div>
+          <p>The conclusion will be generated automatically after <strong>5 observations</strong> are recorded.</p>
+          <div class="pending-progress">
+            <span id="conclusionCount">0</span> / 5 observations recorded
+          </div>
+        </div>
+        <div id="conclusionContent" style="display:none;">
+          <div id="conclusionText"></div>
+        </div>
+      </div>
+    </div>
+
+  </section><!-- /lab-report-card -->
 
 </main>
 
